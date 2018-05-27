@@ -40,6 +40,7 @@ public class Gui implements ActionListener {
     List<JLabel> labelLists = new ArrayList<>();
 
     int musicIndex = 0;
+    int musicTime = 0;
 
     public Gui() {
         setPanel();
@@ -104,6 +105,11 @@ public class Gui implements ActionListener {
         panel2.add(next);
         panel.add(panel2,BorderLayout.PAGE_START);
         createQueueList(panel);
+        createJSlider(panel);
+    }
+
+    private void createJSlider(JPanel panel) {
+
     }
 
     private void createQueueList(JPanel panel) {
@@ -168,6 +174,7 @@ public class Gui implements ActionListener {
         isPause = true;
         isCurrentlyPlaying = false;
         pausedLocation = finputStream.available();
+        System.out.println(pausedLocation);
         player.close();
     }
 
@@ -180,6 +187,7 @@ public class Gui implements ActionListener {
         finputStream = new FileInputStream(musicPath);
         highlightMusic();
         totalSongLength = finputStream.available();
+        System.out.println(totalSongLength);
         if(isPause) {
             isPause = false;
             finputStream.skip(totalSongLength - pausedLocation);
@@ -187,6 +195,17 @@ public class Gui implements ActionListener {
         player = new Player(finputStream);
         new Thread(() -> {
             try {
+                new Thread(() -> {
+                    try {
+                        while(true) {
+                            Thread.sleep(1000);
+                            musicTime++;
+                            System.out.println(musicTime);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
                 player.play();
                 if(player.isComplete()) playNextSong();
             } catch (JavaLayerException e) {
