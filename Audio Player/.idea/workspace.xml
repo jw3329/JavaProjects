@@ -28,8 +28,8 @@
       <file leaf-file-name="Gui.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/musicplayergui/Gui.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="103" column="49" lean-forward="true" selection-start-line="103" selection-start-column="49" selection-end-line="103" selection-end-column="49" />
+            <state relative-caret-position="341">
+              <caret line="196" column="19" lean-forward="true" selection-start-line="196" selection-start-column="19" selection-end-line="196" selection-end-column="19" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -261,7 +261,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="3" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -324,8 +324,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/musicplayergui/Gui.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="103" column="49" lean-forward="true" selection-start-line="103" selection-start-column="49" selection-end-line="103" selection-end-column="49" />
+        <state relative-caret-position="341">
+          <caret line="196" column="19" lean-forward="true" selection-start-line="196" selection-start-column="19" selection-end-line="196" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

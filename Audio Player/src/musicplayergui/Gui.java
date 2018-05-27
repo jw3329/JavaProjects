@@ -21,11 +21,12 @@ public class Gui implements ActionListener {
     JButton play = new JButton("Play");
     JButton pause = new JButton("Pause");
     JButton stop = new JButton("Stop");
+    JButton next = new JButton("Next");
 
     JFrame frame;
     JPanel panel;
 
-    String musicPath = "C:\\Users\\Jun Won\\Documents\\testingMusic.mp3";
+    String musicPath = "";
 
     FileInputStream finputStream;
     int totalSongLength;
@@ -36,6 +37,9 @@ public class Gui implements ActionListener {
     boolean isCurrentlyPlaying = false;
 
     List<File> fileLists;
+    List<JLabel> labelLists = new ArrayList<>();
+
+    int musicIndex = 0;
 
     public Gui() {
         setPanel();
@@ -68,27 +72,16 @@ public class Gui implements ActionListener {
                 for(int i=0;i<fileLists.size();i++) {
                     System.out.println(fileLists.get(i).getAbsolutePath());
                 }
+                createQueueList(panel);
             }
         });
-        openFolder.addActionListener(e -> {
-            JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int retVal = jfc.showOpenDialog(null);
-            if(retVal == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = jfc.getSelectedFile();
-                getEveryContentsOfFolder(selectedFile.getAbsolutePath());
-            }
-        });
-    }
-
-    private void getEveryContentsOfFolder(String name) {
-
     }
 
     private void setButtonOnclickListener() {
         play.addActionListener(this);
         pause.addActionListener(this);
         stop.addActionListener(this);
+        next.addActionListener(this);
     }
 
     private void setFrame() {
@@ -101,14 +94,34 @@ public class Gui implements ActionListener {
 
     private void setPanel() {
         panel = new JPanel();
-        panel.setLayout(new GridLayout(1,3,5,5));
-        panel.add(play);
-        panel.add(pause);
-        panel.add(stop);
+        panel.setLayout(new BorderLayout());
+        panel.setPreferredSize(new Dimension(600,400));
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new GridLayout(1,4, 5,5));
+        panel2.add(play);
+        panel2.add(pause);
+        panel2.add(stop);
+        panel2.add(next);
+        panel.add(panel2,BorderLayout.PAGE_START);
+        createQueueList(panel);
+    }
+
+    private void createQueueList(JPanel panel) {
+        JPanel tempPanel = new JPanel();
+        tempPanel.setLayout(new BoxLayout(tempPanel,BoxLayout.PAGE_AXIS));
+        panel.add(tempPanel,BorderLayout.LINE_START);
+        tempPanel.setBorder(BorderFactory.createEmptyBorder(10,10,0,0));
+        if(fileLists == null) return;
+        for(int i=0;i<fileLists.size();i++) {
+            JLabel label = new JLabel(fileLists.get(i).getName());
+            tempPanel.add(label);
+            labelLists.add(label);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(fileLists.isEmpty()) return;
         if(e.getSource() == play) {
             try {
                 playMusic();
@@ -125,7 +138,22 @@ public class Gui implements ActionListener {
             }
         } else if(e.getSource() == stop) {
             stopMusic();
+        } else if(e.getSource() == next) {
+            try {
+                playNextSong();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (JavaLayerException e1) {
+                e1.printStackTrace();
+            }
         }
+    }
+
+    private void playNextSong() throws IOException, JavaLayerException {
+        stopMusic();
+        if(musicIndex + 1 < fileLists.size()) musicIndex++;
+        else musicIndex = 0;
+        playMusic();
     }
 
     private void stopMusic() {
@@ -148,7 +176,9 @@ public class Gui implements ActionListener {
             return;
         }
         isCurrentlyPlaying = true;
+        musicPath = fileLists.get(musicIndex).getAbsolutePath();
         finputStream = new FileInputStream(musicPath);
+        highlightMusic();
         totalSongLength = finputStream.available();
         if(isPause) {
             isPause = false;
@@ -158,9 +188,25 @@ public class Gui implements ActionListener {
         new Thread(() -> {
             try {
                 player.play();
+                if(player.isComplete()) playNextSong();
             } catch (JavaLayerException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private void highlightMusic() {
+        deleteAllBackground();
+        labelLists.get(musicIndex).setBackground(Color.CYAN);
+        labelLists.get(musicIndex).setOpaque(true);
+    }
+
+    private void deleteAllBackground() {
+        for(int i=0;i<labelLists.size();i++) {
+            labelLists.get(i).setOpaque(false);
+            labelLists.get(i).repaint();
+        }
     }
 }
